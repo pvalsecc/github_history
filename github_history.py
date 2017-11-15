@@ -68,10 +68,13 @@ def fetch_report(older_time, user):
     for event in user.get_events():
         if event.created_at < older_time:
             break
-        if event.type in {'DeleteEvent'}:
+        if event.type in {'DeleteEvent', 'ForkEvent'}:
             continue
 
-        repo_name = get_root_repo(event.repo).full_name
+        root_repo = get_root_repo(event.repo)
+        if root_repo is None:
+            continue
+        repo_name = root_repo.full_name
 
         repo = repos.setdefault(repo_name, {'branches': {}, 'issues': {}, 'wiki': {}})
         branches = repo['branches']
@@ -215,10 +218,14 @@ def get_root_repo(repo):
     if id_ in ROOT_REPO_CACHE:
         return ROOT_REPO_CACHE[id_]
 
-    if not repo.fork:
-        result = repo
-    else:
-        result = get_root_repo(repo.parent)
+    try:
+        if not repo.fork:
+            result = repo
+        else:
+            result = get_root_repo(repo.parent)
+    except github.GithubException:
+        print("ERROR fetching info about " + repo.name)
+        result = None
 
     ROOT_REPO_CACHE[id_] = result
     return result
