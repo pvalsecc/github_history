@@ -91,6 +91,8 @@ def fetch_report(older_time, user):
                     'when': event.created_at,
                     'what': 'tag created'
                 })
+            elif ref_type == 'repository':
+                pass
             else:
                 print("UNKNOWN CreateEvent ref_type: " + ref_type)
 
