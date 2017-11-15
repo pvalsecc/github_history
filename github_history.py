@@ -178,14 +178,17 @@ def print_report(repos):
             continue
 
         print("%s%s ---------------%s" % (fg('light_red') + attr('bold'), repo_name, attr(0)))
+
         for branch_name, branch in sorted(branches.items()):
             print('    %s%s%s: %s%s%s' % (fg('light_green') + attr('bold'), branch_name, attr(0),
                                           fg('green'), branch.get('title', ''), attr(0)))
             print_events(branch['events'])
+
         for issue_id, issue in sorted(issues.items()):
             print('    %s#%s%s: %s%s%s' % (fg('light_green') + attr('bold'), issue_id, attr(0),
                                            fg('green'), issue.get('title', ''), attr(0)))
             print_events(issue['events'])
+
         for page_name, page in sorted(wiki.items()):
             print('    %s[%s]%s: %s%s%s' % (fg('light_green') + attr('bold'), page_name, attr(0),
                                             fg('green'), page.get('title', ''), attr(0)))
@@ -201,7 +204,7 @@ def merge_prs_in_branches(branches, issues):
             del issues[branch['pr_number']]
 
 
-ROOT_REPO_CACHE={}
+ROOT_REPO_CACHE = {}
 
 
 def get_root_repo(repo):
