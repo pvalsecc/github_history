@@ -15,4 +15,4 @@ Those values can also be passed as parameters.
 The token must be generated from the [GitHub developer settings](https://github.com/settings/tokens) and
 must have those permissions: `read:user, repo`.
 
-To run it, use the `github_history` wrapper script. It will setup a virtualenv for you.
+To run it, use the `github_history.sh` wrapper script. It will setup a virtualenv for you.
