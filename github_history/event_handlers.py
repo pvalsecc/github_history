@@ -1,3 +1,6 @@
+import github
+
+
 # noinspection PyPep8Naming
 def IssueCommentEvent(repo, event):
     issue = _issue_common(repo, event)
@@ -104,6 +107,11 @@ def ForkEvent(repo, event):
     pass
 
 
+# noinspection PyPep8Naming
+def MemberEvent(repo, event):
+    pass
+
+
 def _get_commit_title(commit):
     message = commit['message']
     return message.split('\n')[0]
@@ -111,6 +119,23 @@ def _get_commit_title(commit):
 
 def _get_commit_titles(commits):
     return map(_get_commit_title, commits)
+
+
+PR_CACHE = {}
+
+
+def _get_pr(repo, id_):
+    global PR_CACHE
+    if id_ in PR_CACHE:
+        return PR_CACHE[id_]
+
+    try:
+        result = repo.get_pull(id_)
+    except github.UnknownObjectException:
+        result = None  # not a PR
+
+    PR_CACHE[id_] = result
+    return result
 
 
 def _pr_common(repo, event):
@@ -126,7 +151,16 @@ def _pr_common(repo, event):
 
 def _issue_common(repo, event):
     issues = repo['issues']
-    issue = issues.setdefault(event.payload['issue']['number'], {})
+    id_ = event.payload['issue']['number']
+    issue = issues.setdefault(id_, {})
     if 'title' not in issue:
         issue['title'] = event.payload['issue']['title']
+    pr = _get_pr(event.repo, id_)
+    if pr is not None:
+        branch = repo['branches'].setdefault(pr.head.ref, {'events': []})
+        if branch is not None:
+            if 'pr_number' not in branch:
+                branch['pr_number'] = id_
+            if 'title' not in branch:
+                branch['title'] = pr.title
     return issue
