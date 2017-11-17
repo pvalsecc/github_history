@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$(dirname "$(readlink -f "$0")")" && pwd )"
 
-if [[ ! -d .venv ]]
+if [[ ! -d ${DIR}/.venv ]]
 then
     /usr/bin/virtualenv --python=/usr/bin/python3 ${DIR}/.venv
-    ${DIR}/.venv/bin/pip install -r requirements.txt
+    ${DIR}/.venv/bin/pip install -r ${DIR}/requirements.txt
 fi
 
 export PYTHONPATH=${DIR}:$PYTHONPATH
