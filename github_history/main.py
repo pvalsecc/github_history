@@ -38,7 +38,7 @@ def parse_args():
     parser.add_argument('--token', help='GitHub API token to use',
                         **default_from_config(config, 'user', 'token'))
 
-    parser.add_argument('--days', help='number of days to fetch', type=int, default=7)
+    parser.add_argument('--days', help='number of days to fetch', type=int, default=8)
 
     return parser.parse_args()
 

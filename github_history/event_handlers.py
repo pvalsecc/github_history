@@ -112,6 +112,11 @@ def MemberEvent(repo, event):
     pass
 
 
+# noinspection PyPep8Naming
+def CommitCommentEvent(repo, event):
+    pass
+
+
 def _get_commit_title(commit):
     message = commit['message']
     return message.split('\n')[0]
