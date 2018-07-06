@@ -1,2 +1,2 @@
-colored==1.3.9
+colored==1.3.93
 PyGithub==1.40
