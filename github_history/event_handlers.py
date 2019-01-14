@@ -59,7 +59,8 @@ def PullRequestEvent(repo, event):
 # noinspection PyPep8Naming
 def PushEvent(repo, event):
     branches = repo['branches']
-    if not event.payload['commits'][-1]['message'].startswith('Merge pull request #'):
+    commits = event.payload['commits']
+    if len(commits) > 0 and not commits[-1]['message'].startswith('Merge pull request #'):
         ref = event.payload['ref'].replace('refs/heads/', '')
         branches.setdefault(ref, {}).setdefault('events', []).append({
             'when': event.created_at,
