@@ -105,6 +105,8 @@ def DeleteEvent(repo, event):
             'when': event.created_at,
             'what': 'deleted'
         })
+    elif ref_type == 'tag':
+        pass  # ignored
     else:
         print("UNKNOWN DeleteEvent ref_type: " + ref_type)
 
