@@ -1,4 +1,5 @@
 import github
+import re
 
 
 # noinspection PyPep8Naming
@@ -45,8 +46,9 @@ def PullRequestReviewCommentEvent(repo, event):
 def PullRequestEvent(repo, event):
     branch = _pr_common(repo, event)
     what = 'PR ' + event.payload['action']
+    pr = event.payload['pull_request']
     if event.payload['action'] == 'closed':
-        if event.payload['pull_request']['merged']:
+        if pr['merged']:
             what += ' merged'
         else:
             what += ' dropped'
@@ -54,6 +56,8 @@ def PullRequestEvent(repo, event):
         'when': event.created_at,
         'what': what
     })
+    # _get_jira(repo['branches'], pr['head']['ref'], pr['title'])
+    _get_jira(repo['branches'], pr['head']['ref'], pr['body'])
 
 
 # noinspection PyPep8Naming
@@ -66,6 +70,8 @@ def PushEvent(repo, event):
             'when': event.created_at,
             'what': 'push: %s' % ('; '.join(_get_commit_titles(event.payload['commits'])))
         })
+        for commit in commits:
+            _get_jira(branches, ref, commit['message'])
 
 
 # noinspection PyPep8Naming
@@ -175,3 +181,13 @@ def _issue_common(repo, event):
             if 'title' not in branch:
                 branch['title'] = pr.title
     return issue
+
+
+JIRA_RE = re.compile(r'\b([A-Z\d]+-\d+)\b')
+
+
+def _get_jira(branches, ref, message):
+    if message is not None:
+        jira_matcher = JIRA_RE.search(message)
+        if jira_matcher is not None:
+            branches[ref].setdefault('jira', set()).add(jira_matcher.group(1))

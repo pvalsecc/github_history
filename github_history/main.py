@@ -91,8 +91,9 @@ def print_report(repos):
         print("%s%s ---------------%s" % (fg('light_red') + attr('bold'), repo_name, attr(0)))
 
         for branch_name, branch in sorted(branches.items()):
-            print('    %s%s%s: %s%s%s' % (fg('light_green') + attr('bold'), branch_name, attr(0),
-                                          fg('green'), branch.get('title', ''), attr(0)))
+            print('    %s%s%s: %s%s%s %s%s%s' % (fg('light_green') + attr('bold'), branch_name, attr(0),
+                                                 fg('green'), branch.get('title', ''), attr(0),
+                                                 fg('blue'), ', '.join(branch.get('jira', [])), attr(0)))
             print_events(branch['events'])
 
         for issue_id, issue in sorted(issues.items()):
